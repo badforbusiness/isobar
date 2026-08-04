@@ -312,6 +312,13 @@ def generate_visualisations(
                 fontsize=9,
             )
 
+    # Add failure warning if Classical solver missed target massively (>5% delta)
+    if classical_res.get("rwa_delta_pct", 0.0) > 5.0:
+        ax.text(0.5, 0.85, "CLASSICAL SOLVER FAILED TO REACH TARGET\n(Mathematical scaling failure)", 
+                transform=ax.transAxes, ha="center", va="center", 
+                fontsize=16, fontweight="bold", color="red",
+                bbox=dict(facecolor='white', alpha=0.9, edgecolor='red', boxstyle='round,pad=0.5', linewidth=2))
+
     plt.tight_layout()
     bar_chart_path = results_dir / "ead_comparison_by_asset_class.png"
     plt.savefig(bar_chart_path, dpi=300)
