@@ -169,7 +169,7 @@ Solver Status                    |          CONVERGED |            SUCCESS
 
 ### Case Study 2: Tier-1 Bank Scale & The Mathematical Floor (N=100, Target: £60B RWA)
 
-We re-calibrated the generator to model a massive Tier-1 UK bank (e.g., Lloyds) heavily weighted towards retail lending:
+We re-calibrated the generator to model a massive Tier-1 UK bank (e.g., Lloyds, NatWest, Santander UK) heavily weighted towards retail lending:
 * **Corporate**: 20 buckets | £60.9B EAD (25%) | £59.9B RWA
 * **SME**: 30 buckets | £35.0B EAD (14%) | £46.1B RWA
 * **Retail-Mortgage**: 50 buckets | £145.0B EAD (60%) | £16.8B RWA
