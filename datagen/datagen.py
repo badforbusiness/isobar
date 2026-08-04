@@ -147,7 +147,6 @@ def generate_synthetic_portfolio(config: IsobarConfig) -> pd.DataFrame:
     rating_pd_map = config.portfolio.rating_pd_map
 
     mat_min, mat_max = config.portfolio.maturity_range
-    ead_min_cfg, ead_max_cfg = config.portfolio.ead_baseline_range
     ead_min_factor = config.portfolio.ead_min_factor
     ead_max_factor = config.portfolio.ead_max_factor
 
@@ -160,6 +159,7 @@ def generate_synthetic_portfolio(config: IsobarConfig) -> pd.DataFrame:
         pd_min, pd_max = ac.pd_range
         lgd_min, lgd_max = ac.lgd_range
         eligible_grades = ac.eligible_grades
+        ead_min_cfg, ead_max_cfg = ac.ead_baseline_range
 
         for i in range(count):
             asset_id = str(uuid.uuid4())

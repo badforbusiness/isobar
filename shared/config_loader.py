@@ -34,6 +34,7 @@ class AssetClassConfig:
     pd_range: tuple[float, float]
     lgd_range: tuple[float, float]
     eligible_grades: list[str]
+    ead_baseline_range: tuple[float, float]
 
 
 @dataclass
@@ -43,7 +44,6 @@ class PortfolioConfig:
     rating_pd_map: dict[str, float]
     asset_classes: list[AssetClassConfig]
     maturity_range: tuple[float, float]
-    ead_baseline_range: tuple[float, float]
     ead_min_factor: float
     ead_max_factor: float
 
@@ -109,6 +109,7 @@ def _parse_asset_class(raw: dict[str, Any]) -> AssetClassConfig:
         pd_range=tuple(raw["pd_range"]),
         lgd_range=tuple(raw["lgd_range"]),
         eligible_grades=raw.get("eligible_grades", []),
+        ead_baseline_range=tuple(raw["ead_baseline_range"]),
     )
 
 
@@ -119,7 +120,6 @@ def _parse_portfolio(raw: dict[str, Any]) -> PortfolioConfig:
         rating_pd_map=raw["rating_pd_map"],
         asset_classes=[_parse_asset_class(ac) for ac in raw["asset_classes"]],
         maturity_range=tuple(raw["maturity_range"]),
-        ead_baseline_range=tuple(raw["ead_baseline_range"]),
         ead_min_factor=float(raw["ead_min_factor"]),
         ead_max_factor=float(raw["ead_max_factor"]),
     )

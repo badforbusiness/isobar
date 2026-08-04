@@ -12,7 +12,7 @@
 # =============================================================================
 
 portfolio:
-  n_assets: 50
+  n_assets: 100
   seed: 42
 
   # Rating grade → PD midpoint mapping (Basel-calibrated)
@@ -28,39 +28,41 @@ portfolio:
 
   asset_classes:
     - name: Corporate
-      weight: 0.4            # proportion of n_assets allocated to this class
+      weight: 0.2            # proportion of n_assets allocated to this class
       pd_range: [0.001, 0.05]
       lgd_range: [0.35, 0.55]
       eligible_grades: [A, BBB, BB, B]
+      ead_baseline_range: [1000000000, 5000000000]
 
     - name: SME
       weight: 0.3
       pd_range: [0.005, 0.10]
       lgd_range: [0.40, 0.60]
       eligible_grades: [BBB, BB, B, CCC]
+      ead_baseline_range: [500000000, 2000000000]
 
     - name: Retail-Mortgage
-      weight: 0.3
+      weight: 0.5
       pd_range: [0.002, 0.03]
       lgd_range: [0.15, 0.30]
       eligible_grades: [AAA, AA, A, BBB]
+      ead_baseline_range: [1000000000, 5000000000]
 
   maturity_range: [1.0, 5.0]              # years
-  ead_baseline_range: [1_000_000, 50_000_000]  # £
   ead_min_factor: 0.5                      # floor  = baseline × factor
   ead_max_factor: 2.0                      # ceiling = baseline × factor
 
 optimization:
-  target_rwa: 500_000_000   # £500M target RWA
+  target_rwa: 60_000_000_000   # £60B target RWA
 
-  # ── Design Decision: λ = 0.1 ──
+  # ── Design Decision: λ = 1.0 ──
   # Controls the trade-off between hitting target RWA (Term A) and minimising
   # disruption to the existing book shape (Term B).
-  # At PoC scale, RWA² ≈ O(10^17) and normalised disruption ≈ O(1),
-  # so λ = 0.1 keeps the solver focused on the RWA target while still
+  # At scaled £B values, RWA² ≈ O(10^21) and normalised disruption ≈ O(1),
+  # so λ = 1.0 keeps the solver focused on the RWA target while still
   # penalising operationally unrealistic reshaping.
   # The Jupyter notebook includes a sensitivity sweep over λ ∈ {0.01, 0.1, 1.0, 10.0}.
-  lambda_reg: 0.1
+  lambda_reg: 1.0
 
   classical:
     method: SLSQP
@@ -73,7 +75,7 @@ optimization:
     # discrete steps across [EAD_min_i, EAD_max_i].
     # Boundary constraints are satisfied BY CONSTRUCTION (encoding cannot
     # produce out-of-range values), eliminating the need for boundary penalties.
-    # Total binary variables: N × B = 50 × 8 = 400 — well within SA capacity.
+    # Total binary variables: N × B = 100 × 8 = 800 — within SA capacity.
     num_bits: 8
     num_reads: 1000
     num_sweeps: 5000
