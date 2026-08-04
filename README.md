@@ -115,10 +115,10 @@ Key configuration fields include:
 
 | Evaluation Dimension | Metric / Criterion | Target Value | Classical Performance | Quantum Performance |
 | :--- | :--- | :--- | :--- | :--- |
-| **Target Accuracy** | RWA Delta % ($\| \text{RWA}_{\text{achieved}} - \text{RWA}_{\text{target}} \| / \text{RWA}_{\text{target}}$) | $< 1.0\%$ | $< 0.01\%$ | $< 0.5\%$ |
+| **Target Accuracy** | RWA Delta % ($\| \text{RWA-achieved} - \text{RWA-target} \| / \text{RWA-target}$) | $< 1.0\%$ | $< 0.01\%$ | $< 0.5\%$ |
 | **Disruption Minimisation** | Sum of squared relative EAD deviations | Minimised | Optimal ($< 0.05$) | Near-optimal |
 | **Execution Speed** | Wall-clock solve time ($N=50$) | $< 10.0$ seconds | $< 0.1$ seconds | $< 3.0$ seconds |
-| **Boundary Compliance** | Violations of $\text{EAD}_{\text{min},i} \le X_i \le \text{EAD}_{\text{max},i}$ | 0 violations | 0 violations (SLSQP bounds) | 0 violations (By construction) |
+| **Boundary Compliance** | Violations of $\text{EAD-min},i \le X_i \le \text{EAD-max},i$ | 0 violations | 0 violations (SLSQP bounds) | 0 violations (By construction) |
 | **Scalability** | Support for $N=50$ and $N=100$ asset buckets | Clean execution | $O(N)$ fast gradient convergence | $O(N \cdot B)$ QUBO mapping |
 
 ---
