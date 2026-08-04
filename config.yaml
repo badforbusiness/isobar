@@ -1,0 +1,96 @@
+# =============================================================================
+# Project ISOBAR — Configuration
+# =============================================================================
+# This file is the single source of truth for all runtime parameters.
+# It is mounted read-only into every Docker service.
+#
+# DOMAIN DECISION LOG (see implementation_plan.md for full rationale):
+#   - lambda_reg = 0.1: balances RWA-targeting vs book-shape stability
+#   - concentration_constraints: stubbed for Phase 2 (quantum QUBO complexity)
+#   - output format: CSV primary (human-readable at PoC scale)
+#   - num_bits = 8: gives 256 discrete EAD steps per asset (≈£350K resolution)
+# =============================================================================
+
+portfolio:
+  n_assets: 50
+  seed: 42
+
+  # Rating grade → PD midpoint mapping (Basel-calibrated)
+  # These midpoints are used to assign PDs consistently with rating grades.
+  rating_pd_map:
+    AAA: 0.0003
+    AA:  0.0005
+    A:   0.001
+    BBB: 0.005
+    BB:  0.015
+    B:   0.05
+    CCC: 0.15
+
+  asset_classes:
+    - name: Corporate
+      weight: 0.4            # proportion of n_assets allocated to this class
+      pd_range: [0.001, 0.05]
+      lgd_range: [0.35, 0.55]
+      eligible_grades: [A, BBB, BB, B]
+
+    - name: SME
+      weight: 0.3
+      pd_range: [0.005, 0.10]
+      lgd_range: [0.40, 0.60]
+      eligible_grades: [BBB, BB, B, CCC]
+
+    - name: Retail-Mortgage
+      weight: 0.3
+      pd_range: [0.002, 0.03]
+      lgd_range: [0.15, 0.30]
+      eligible_grades: [AAA, AA, A, BBB]
+
+  maturity_range: [1.0, 5.0]              # years
+  ead_baseline_range: [1_000_000, 50_000_000]  # £
+  ead_min_factor: 0.5                      # floor  = baseline × factor
+  ead_max_factor: 2.0                      # ceiling = baseline × factor
+
+optimization:
+  target_rwa: 500_000_000   # £500M target RWA
+
+  # ── Design Decision: λ = 0.1 ──
+  # Controls the trade-off between hitting target RWA (Term A) and minimising
+  # disruption to the existing book shape (Term B).
+  # At PoC scale, RWA² ≈ O(10^17) and normalised disruption ≈ O(1),
+  # so λ = 0.1 keeps the solver focused on the RWA target while still
+  # penalising operationally unrealistic reshaping.
+  # The Jupyter notebook includes a sensitivity sweep over λ ∈ {0.01, 0.1, 1.0, 10.0}.
+  lambda_reg: 0.1
+
+  classical:
+    method: SLSQP
+    maxiter: 1000
+    ftol: 1.0e-12
+
+  quantum:
+    # ── Design Decision: 8-bit binary expansion ──
+    # Each continuous EAD_i is encoded as B binary variables, giving 2^B = 256
+    # discrete steps across [EAD_min_i, EAD_max_i].
+    # Boundary constraints are satisfied BY CONSTRUCTION (encoding cannot
+    # produce out-of-range values), eliminating the need for boundary penalties.
+    # Total binary variables: N × B = 50 × 8 = 400 — well within SA capacity.
+    num_bits: 8
+    num_reads: 1000
+    num_sweeps: 5000
+    penalty_weight: 10.0     # Lagrange multiplier for RWA constraint in QUBO
+
+  # ── Design Decision: Concentration constraints deferred ──
+  # Stubbed here for schema completeness. Implemented in classical solver only.
+  # Quantum QUBO does NOT enforce these in Phase 1 (see implementation_plan.md).
+  concentration_constraints:
+    enabled: false
+    limits: []
+    # Example for Phase 2:
+    # limits:
+    #   - asset_class: Corporate
+    #     max_share: 0.40     # no more than 40% of total EAD
+
+output:
+  format: csv               # csv | parquet
+  results_dir: /data/results
+  data_dir: /data/assets

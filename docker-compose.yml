@@ -1,0 +1,44 @@
+services:
+  datagen:
+    build: ./datagen
+    volumes:
+      - isobar-data:/data
+      - ./config.yaml:/app/config.yaml:ro
+      - ./shared:/app/shared:ro
+
+  classical_opt:
+    build: ./classical_opt
+    volumes:
+      - isobar-data:/data
+      - ./config.yaml:/app/config.yaml:ro
+      - ./shared:/app/shared:ro
+    depends_on:
+      datagen:
+        condition: service_completed_successfully
+
+  quantum_opt:
+    build: ./quantum_opt
+    volumes:
+      - isobar-data:/data
+      - ./config.yaml:/app/config.yaml:ro
+      - ./shared:/app/shared:ro
+    depends_on:
+      datagen:
+        condition: service_completed_successfully
+
+  notebooks:
+    build: ./notebooks
+    ports:
+      - "8888:8888"
+    volumes:
+      - isobar-data:/data
+      - isobar-data:/app/data
+      - ./config.yaml:/app/config.yaml:ro
+      - ./shared:/app/shared:ro
+      - ./notebooks:/app/notebooks
+    depends_on:
+      datagen:
+        condition: service_completed_successfully
+
+volumes:
+  isobar-data:
