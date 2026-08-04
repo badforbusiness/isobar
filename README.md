@@ -12,10 +12,14 @@ Under modern banking regulation (Basel II / III IRB approach), regulatory capita
 
 Formally, the **Inverse RWA Optimisation** problem requires finding an Exposure at Default vector $\mathbf{X} = [X_1, X_2, \dots, X_N]^T$ for $N$ credit asset buckets that minimises total loss:
 
-$$\min_{\mathbf{X}} f(\mathbf{X}) = \left( \sum_{i=1}^N X_i \cdot \text{RW}_i - \text{RWA}_{\text{target}} \right)^2 + \lambda \sum_{i=1}^N \left( \frac{X_i - \text{EAD}_{\text{baseline},i}}{\text{EAD}_{\text{baseline},i}} \right)^2$$
+$$
+\min_{\mathbf{X}} f(\mathbf{X}) = \left( \sum_{i=1}^N X_i \cdot \text{RW}_i - \text{RWA}_{\text{target}} \right)^2 + \lambda \sum_{i=1}^N \left( \frac{X_i - \text{EAD}_{\text{baseline},i}}{\text{EAD}_{\text{baseline},i}} \right)^2
+$$
 
 Subject to origination policy boundary constraints:
-$$\text{EAD}_{\text{min},i} \le X_i \le \text{EAD}_{\text{max},i} \quad \forall i \in \{1, \dots, N\}$$
+$$
+\text{EAD}_{\text{min},i} \le X_i \le \text{EAD}_{\text{max},i} \quad \forall i \in \{1, \dots, N\}
+$$
 
 Project ISOBAR benchmarks a **Classical continuous solver** (SciPy SLSQP) against a **Quantum discrete solver** (QUBO mapped onto D-Wave Simulated Annealing) to evaluate algorithmic performance, solution quality, execution time, and quantum tractability for portfolio shaping.
 
@@ -94,7 +98,7 @@ docker compose up notebooks
 
 ## Configuration Reference
 
-All runtime parameters are specified in [`config.yaml`](file:///c:/QuantumPOC/config.yaml), which is mounted read-only into every service container.
+All runtime parameters are specified in [`config.yaml`](./config.yaml), which is mounted read-only into every service container.
 
 Key configuration fields include:
 - `portfolio.n_assets`: Number of asset buckets (default: `50`).
