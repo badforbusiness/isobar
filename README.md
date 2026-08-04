@@ -17,6 +17,7 @@ $$
 $$
 
 Subject to origination policy boundary constraints:
+
 $$
 \text{EAD}_{\text{min},i} \le X_i \le \text{EAD}_{\text{max},i} \quad \forall i \in \{1, \dots, N\}
 $$
